@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Http\Requests\TaskRequest;
+use App\Models\Task;
+
+class TaskController extends Controller
+{
+    public function  submit(TaskRequest $req){
+        $contact = new Contact();
+        $contact->name = $req->input('name');
+        $contact->email = $req->input('email');
+        $contact->subject = $req->input('subject');
+        $contact->message = $req->input('message');
+
+        $contact->save();
+
+        return redirect()->route('home')->with('success', 'Message added');
+    }
+
+    public function allData(){
+        return view('messages', ['data' => Contact::all()]);
+    }
+    public function showOneMessage($id){
+        return view('one-message', ['data' => Contact::find($id)]);
+    }
+    public function updateMessage($id){
+        return view('update-message', ['data' => Contact::find($id)]);
+    }
+
+    public function  updateMessageSubmit($id, TaskRequest $req){
+        $contact = Contact::find($id);
+        $contact->name = $req->input('name');
+        $contact->email = $req->input('email');
+        $contact->subject = $req->input('subject');
+        $contact->message = $req->input('message');
+
+        $contact->save();
+
+        return redirect()->route('contact-data-one', $id)->with('success', 'Message updated');
+    }
+    public function deleteMessage($id){
+        Contact::find($id)->delete();
+        return redirect()->route('contact-data', $id)->with('success', 'Message deleted');
+    }
+}
